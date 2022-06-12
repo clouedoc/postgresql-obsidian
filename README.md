@@ -1,4 +1,4 @@
-# PostgreSQL obsidian
+# PostgreSQL obsidian (work in progress)
 
 This [Obsidian](https://obsidian.md) plugin will allow you to send your daily note's data to a PostgreSQL database of your choice.
 
