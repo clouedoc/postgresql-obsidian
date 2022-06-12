@@ -50,6 +50,7 @@ Contributions are what make the open source community such an amazing place to b
 
 -   Thanks to [pg](https://github.com/brianc/node-postgres/tree/master/packages/pg) for making it possible to easily connect to a PostgreSQL database from JavaScript.
 -   Thanks to the [Rush Stack](https://github.com/microsoft/rushstack) for providing an easy-to-use ESLint configuration.
+-   Thanks to the [Dataview Plugin](https://github.com/blacksmithgu/obsidian-dataview) for making it easy to access a note's metadata.
 
 ## License
 
