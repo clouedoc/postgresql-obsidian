@@ -1,24 +1,27 @@
 {
-	"name": "obsidian-sample-plugin",
-	"version": "1.0.1",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"name": "postgresql-obsidian",
+	"version": "0.0.1",
+	"description": "An obsidian.md plugin that sends your data to a PostgreSQL database for further analysis.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
-		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-		"version": "node version-bump.mjs && git add manifest.json versions.json"
+		"build": "tsc && node esbuild.config.mjs production",
+		"version": "node version-bump.mjs && git add manifest.json versions.json",
+		"lint": "eslint ./src"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
+		"@rushstack/eslint-config": "^2.6.0",
 		"@types/node": "^16.11.6",
 		"@typescript-eslint/eslint-plugin": "^5.2.0",
 		"@typescript-eslint/parser": "^5.2.0",
 		"builtin-modules": "^3.2.0",
 		"esbuild": "0.13.12",
+		"eslint": "^8.17.0",
 		"obsidian": "latest",
 		"tslib": "2.3.1",
-		"typescript": "4.4.4"
+		"typescript": "^4.7.3"
 	}
 }

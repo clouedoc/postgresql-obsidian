@@ -1,3 +1,4 @@
+import { haha } from 'bidule';
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
 
 // Remember to rename these classes and interfaces!
@@ -9,6 +10,8 @@ interface MyPluginSettings {
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	mySetting: 'default'
 }
+
+console.log(haha)
 
 export default class MyPlugin extends Plugin {
 	settings: MyPluginSettings;
