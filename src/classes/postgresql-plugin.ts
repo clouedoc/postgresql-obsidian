@@ -1,8 +1,9 @@
 import { DEFAULT_SETTINGS } from "../constants";
-import { Plugin, View, TFile } from "obsidian";
+import { Plugin, View, TFile, Notice } from "obsidian";
 import { SettingsTab } from ".";
 import { IPluginSettings } from "../types/plugin-settings";
 import { DataviewApi, getAPI } from "obsidian-dataview";
+import { Client } from "pg";
 
 interface IViewWithFile extends View {
 	file: TFile;
@@ -10,6 +11,7 @@ interface IViewWithFile extends View {
 
 export class PostgreSQLPlugin extends Plugin {
 	public settings: IPluginSettings;
+	protected db: Client | undefined;
 
 	public async onload(): Promise<void> {
 		await this.loadSettings();
@@ -20,21 +22,85 @@ export class PostgreSQLPlugin extends Plugin {
 		this.addCommand({
 			id: "postgresql-upload-current-file",
 			name: "PostgreSQL: upload current file information",
-			callback: () => {
+			callback: async () => {
+				const db: Client = await this.getDatabaseClient();
+
 				const filepath: string = (
 					this.app.workspace.activeLeaf.view as IViewWithFile
 				).file.path;
-				const page: Record<string, unknown> = dv.page(filepath);
+				const dataviewData: Record<string, unknown> = dv.page(filepath);
 
-				delete page.file;
-				delete page.position;
+				delete dataviewData.file;
+				delete dataviewData.position;
 
-				console.log(page);
+				try {
+					await db.query(
+						`INSERT INTO obsidian.file (path, dataview_data)
+						VALUES ($1::text, $2::json)
+						ON CONFLICT (path)
+						DO
+							UPDATE SET dataview_data = EXCLUDED.dataview_data
+						;
+						`,
+						[filepath, dataviewData]
+					);
+				} catch (err) {
+					// eslint-disable-next-line no-new
+					new Notice("PostgreSQL error: " + err.message);
+					throw err;
+				}
+
+				// eslint-disable-next-line no-new
+				new Notice("Inserted page");
 			},
 		});
 	}
 
-	public onunload(): void {}
+	/**
+	 * Connect to the PostgreSQL database and return the database client
+	 * @returns
+	 */
+	public async getDatabaseClient(): Promise<Client> {
+		if (!this.settings.connectionUrl) {
+			// eslint-disable-next-line no-new
+			new Notice("PostgreSQL: there is no connection string defined");
+			throw new Error("No connection string");
+		}
+
+		if (this.db) {
+			return this.db;
+		}
+
+		const client: Client = new Client({
+			connectionString: this.settings.connectionUrl,
+			connectionTimeoutMillis: 10000,
+		});
+		try {
+			await client.connect();
+			// eslint-disable-next-line no-new
+			new Notice("Connected to PostgreSQL");
+		} catch (err) {
+			// eslint-disable-next-line no-new
+			new Notice("PostgreSQL connection error: " + err.message);
+			throw err;
+		}
+
+		this.db = client;
+
+		await this.db.query(
+			`CREATE SCHEMA IF NOT EXISTS obsidian;
+			CREATE TABLE IF NOT EXISTS obsidian.file (
+					path text PRIMARY KEY,
+					dataview_data json
+			);`
+		);
+
+		return this.db;
+	}
+
+	public async onunload(): Promise<void> {
+		await this.db?.end();
+	}
 
 	public async loadSettings(): Promise<void> {
 		this.settings = Object.assign(

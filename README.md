@@ -22,8 +22,10 @@ This [Obsidian](https://obsidian.md) plugin will allow you to send your daily no
 ## TODO
 
 -   [x] overcomplicated development workflow
--   [ ] set PostgreSQL URL in the settings
--   [ ] sends various information about your daily notes to a PostgreSQL table
+-   [x] set PostgreSQL URL in the settings
+-   [x] get various information from the current note
+    -   [x] Dataview data
+-   [x] upload command
 
 ## Links
 
