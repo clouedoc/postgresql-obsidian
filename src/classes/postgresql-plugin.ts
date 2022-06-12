@@ -1,16 +1,12 @@
 import { DEFAULT_SETTINGS } from "../constants";
-import { Plugin, View, TFile, Notice } from "obsidian";
+import { Plugin, Notice } from "obsidian";
 import { SettingsTab } from ".";
-import { IPluginSettings } from "../types/plugin-settings";
+import { IPostgresPluginSettings } from "../types/plugin-settings";
 import { DataviewApi, getAPI } from "obsidian-dataview";
 import { Client } from "pg";
 
-interface IViewWithFile extends View {
-	file: TFile;
-}
-
 export class PostgreSQLPlugin extends Plugin {
-	public settings: IPluginSettings;
+	public settings: IPostgresPluginSettings;
 	protected db: Client | undefined;
 
 	public async onload(): Promise<void> {
@@ -25,9 +21,8 @@ export class PostgreSQLPlugin extends Plugin {
 			callback: async () => {
 				const db: Client = await this.getDatabaseClient();
 
-				const filepath: string = (
-					this.app.workspace.activeLeaf.view as IViewWithFile
-				).file.path;
+				const filepath: string =
+					this.app.workspace.getActiveFile().path;
 				const dataviewData: Record<string, unknown> = dv.page(filepath);
 
 				delete dataviewData.file;

@@ -1,4 +1,4 @@
-export interface IPluginSettings {
+export interface IPostgresPluginSettings {
 	/**
 	 * The PostgreSQL connection URL.
 	 */

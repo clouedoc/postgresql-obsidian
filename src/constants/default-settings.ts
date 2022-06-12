@@ -1,5 +1,5 @@
-import { IPluginSettings } from "types";
+import { IPostgresPluginSettings } from "types";
 
-export const DEFAULT_SETTINGS: IPluginSettings = {
-	mySetting: "default",
+export const DEFAULT_SETTINGS: IPostgresPluginSettings = {
+	connectionUrl: "",
 };

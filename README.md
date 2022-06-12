@@ -1,32 +1,64 @@
-# PostgreSQL obsidian (work in progress)
+<h1 align="center">
+  Obsidian + PostgreSQL = ❤️
+</h1>
 
-This [Obsidian](https://obsidian.md) plugin will allow you to send your daily note's data to a PostgreSQL database of your choice.
+<style>
+.image-container {
+  display: flex;
+  justify-content: center;
+  vertical-align: middle;
+}
+</style>
 
-## Getting started
+<div class="image-container">
+    <img height=50 src="./assets/obsidian.png" class="center">
+    <img height=50 src="./assets/postgres.png" class="center">
+</div>
 
-1. Get a PostgreSQL database. You can get one on Scaleway or DigitalOcean for cheap.
+<p align="center">
+    An <a href="https://obsidian.md">Obsidian</a> plugin to upload your notes' metadata to your database.
+</p>
+
+## Features
+
+-   send the Dataview data of a note to a PostgreSQL database
+
+## Installation
+
+1. [Get a PostgreSQL database](https://www.elephantsql.com/)
 2. Set your PostgreSQL connection string inside the settings
-3. Your daily notes are now synced to your PostgreSQL database
+3. Open the command panel and type "PostgreSQL" to see the list of available commands
 
-## Development
+## Contributing
 
-### Setup
+Contributions are what make the open source community such an amazing place to be, learn, inspire, and create. Any contributions you make are **greatly appreciated**!
 
-1. Open this repository on GitPod
+### Development
+
+1. Open this repository on Gitpod
 2. Go to https://gitpod.io and copy your workspace SSH username and host inside `sync.sh`
 3. Copy `sync.sh` inside `.obsidian/plugins`
-4. Execute `sync.sh` (the plugin's files should get copied)
-5. Copy sync.sh
-6. Do changes
+4. Do some modifications on your remote Gitpod development instance
+5. Execute `sync.sh` on your local computer (the plugin's files should get copied)
+6. Iterate
 
-## TODO
+### TODO
 
 -   [x] overcomplicated development workflow
 -   [x] set PostgreSQL URL in the settings
--   [x] get various information from the current note
+-   [ ] get various information from the current note
     -   [x] Dataview data
--   [x] upload command
+    -   [ ] list content
+-   [ ] commands
+    -   [x] upload current note
+    -   [ ] bulk upload
+    -   [ ] automatic upload on edit
+-   [ ] submit to Obsidian plugin registry
 
-## Links
+### Useful links
 
 -   [Obsidian API documentation](https://github.com/obsidianmd/obsidian-api)
+
+## License
+
+[MIT](LICENSE.txt)
