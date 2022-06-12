@@ -2,15 +2,7 @@
   Obsidian + PostgreSQL = ❤️
 </h1>
 
-<style>
-.image-container {
-  display: flex;
-  justify-content: center;
-  vertical-align: middle;
-}
-</style>
-
-<div class="image-container">
+<div style="display: flex; justify-content: center; vertical-align: middle;">
     <img height=50 src="./assets/obsidian.png" class="center">
     <img height=50 src="./assets/postgres.png" class="center">
 </div>
