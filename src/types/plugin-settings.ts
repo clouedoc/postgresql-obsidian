@@ -1,3 +1,6 @@
 export interface IPluginSettings {
-	mySetting: string;
+	/**
+	 * The PostgreSQL connection URL.
+	 */
+	connectionUrl: string;
 }

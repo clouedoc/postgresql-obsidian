@@ -14,18 +14,18 @@ export class SettingsTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl("h2", { text: "Settings for my awesome plugin." });
+		containerEl.createEl("h2", { text: "PostgreSQL settings" });
 
 		new Setting(containerEl)
-			.setName("Setting #1")
-			.setDesc("It's a secret")
+			.setName("PostgreSQL connection URL")
+			.setDesc("This connection URL will be used to send your data.")
 			.addText((text) =>
 				text
-					.setPlaceholder("Enter your secret")
-					.setValue(this.plugin.settings.mySetting)
-					.onChange(async (value) => {
-						console.log("Secret: " + value);
-						this.plugin.settings.mySetting = value;
+					.setPlaceholder("")
+					.setValue(this.plugin.settings.connectionUrl)
+					.onChange(async (url) => {
+						// TODO: try the connection URL
+						this.plugin.settings.connectionUrl = url;
 						await this.plugin.saveSettings();
 					})
 			);
