@@ -2,14 +2,14 @@
   Obsidian + PostgreSQL = ❤️
 </h1>
 
+<p align="center">
+    An <a href="https://obsidian.md">Obsidian</a> plugin to upload your notes' metadata to your database.
+</p>
+
 <div style="display: flex; justify-content: center; vertical-align: middle;">
     <img height=50 src="./assets/obsidian.png" class="center">
     <img height=50 src="./assets/postgres.png" class="center">
 </div>
-
-<p align="center">
-    An <a href="https://obsidian.md">Obsidian</a> plugin to upload your notes' metadata to your database.
-</p>
 
 ## Features
 
