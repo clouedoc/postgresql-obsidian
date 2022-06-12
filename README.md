@@ -46,6 +46,11 @@ Contributions are what make the open source community such an amazing place to b
 
 -   [Obsidian API documentation](https://github.com/obsidianmd/obsidian-api)
 
+## Attribution
+
+-   Thanks to [pg](https://github.com/brianc/node-postgres/tree/master/packages/pg) for making it possible to easily connect to a PostgreSQL database from JavaScript.
+-   Thanks to the [Rush Stack](https://github.com/microsoft/rushstack) for providing an easy-to-use ESLint configuration.
+
 ## License
 
 [MIT](LICENSE.txt)
