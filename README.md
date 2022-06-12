@@ -6,11 +6,6 @@
     An <a href="https://obsidian.md">Obsidian</a> plugin to upload your notes' metadata to your database.
 </p>
 
-<div style="display: flex; justify-content: center; vertical-align: middle;">
-    <img height=50 src="./assets/obsidian.png" class="center">
-    <img height=50 src="./assets/postgres.png" class="center">
-</div>
-
 ## Features
 
 -   send the Dataview data of a note to a PostgreSQL database
@@ -54,3 +49,8 @@ Contributions are what make the open source community such an amazing place to b
 ## License
 
 [MIT](LICENSE.txt)
+
+<div style="display: flex; justify-content: center; vertical-align: middle;">
+    <img height=50 src="./assets/obsidian.png" class="center">
+    <img height=50 src="./assets/postgres.png" class="center">
+</div>
