@@ -49,12 +49,7 @@ Contributions are what make the open source community such an amazing place to b
 
 ### Development
 
-1. Open this repository on Gitpod
-2. Go to https://gitpod.io and copy your workspace SSH username and host inside `sync.sh`
-3. Copy `sync.sh` inside `.obsidian/plugins`
-4. Do some modifications on your remote Gitpod development instance
-5. Execute `sync.sh` on your local computer (the plugin's files should get copied)
-6. Iterate
+See the [developer documentation](./DEV_README.md) for more information.
 
 ### TODO
 

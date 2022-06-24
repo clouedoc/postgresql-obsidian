@@ -1,5 +1,16 @@
 ## Developer's README.md
 
+### Development instructions
+
+1. Open this repository on Gitpod
+2. Go to https://gitpod.io and copy your workspace SSH username and host inside `sync.sh`
+3. Copy `sync.sh` inside `.obsidian/plugins`
+4. Do some modifications on your remote Gitpod development instance
+5. Execute `sync.sh` on your local computer (the plugin's files should get copied)
+6. Restart Obsidian (using a keybinding is useful here)
+7. Iterate steps 4 to 6 until you are satisfied.
+8. Publish your work!
+
 ### Releasing a new version
 
 1. Update your manifest.json with your new version number, such as 1.0.1, and the minimum Obsidian version required for your latest release.
