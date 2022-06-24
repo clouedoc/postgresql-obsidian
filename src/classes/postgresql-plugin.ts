@@ -6,7 +6,8 @@ import { DataviewApi, getAPI } from "obsidian-dataview";
 import { Client } from "pg";
 
 export class PostgreSQLPlugin extends Plugin {
-	public settings: IPostgresPluginSettings;
+	// the settings are defined in `onload`. We can assert that they are defined
+	public settings!: IPostgresPluginSettings;
 	protected db: Client | undefined;
 
 	public async onload(): Promise<void> {
@@ -18,10 +19,15 @@ export class PostgreSQLPlugin extends Plugin {
 			id: "postgresql-upload-current-file",
 			name: "PostgreSQL: upload current file information",
 			callback: async () => {
-				const dv: DataviewApi = getAPI();
+				const dv: DataviewApi | undefined = getAPI();
+				if (!dv) {
+					// eslint-disable-next-line no-new
+					new Notice("The Dataview API is not available");
+					return;
+				}
 				const db: Client = await this.getDatabaseClient();
 
-				const filepath: string =
+				const filepath: string | undefined =
 					this.app.workspace.getActiveFile()?.path;
 
 				if (!filepath) {
@@ -30,7 +36,14 @@ export class PostgreSQLPlugin extends Plugin {
 					return;
 				}
 
-				const dataviewData: Record<string, unknown> = dv.page(filepath);
+				const dataviewData: Record<string, unknown> | undefined =
+					dv.page(filepath);
+
+				if (!dataviewData) {
+					// eslint-disable-next-line no-new
+					new Notice("Failed to fetch the dataview data");
+					return;
+				}
 
 				delete dataviewData.file;
 				delete dataviewData.position;
@@ -48,7 +61,7 @@ export class PostgreSQLPlugin extends Plugin {
 					);
 				} catch (err) {
 					// eslint-disable-next-line no-new
-					new Notice("PostgreSQL error: " + err.message);
+					new Notice("PostgreSQL error: " + (err as Error).message);
 					throw err;
 				}
 
@@ -83,7 +96,9 @@ export class PostgreSQLPlugin extends Plugin {
 			new Notice("Connected to PostgreSQL");
 		} catch (err) {
 			// eslint-disable-next-line no-new
-			new Notice("PostgreSQL connection error: " + err.message);
+			new Notice(
+				"PostgreSQL connection error: " + (err as Error).message
+			);
 			throw err;
 		}
 
