@@ -14,15 +14,22 @@ export class PostgreSQLPlugin extends Plugin {
 
 		this.addSettingTab(new SettingsTab(this.app, this));
 
-		const dv: DataviewApi = getAPI();
 		this.addCommand({
 			id: "postgresql-upload-current-file",
 			name: "PostgreSQL: upload current file information",
 			callback: async () => {
+				const dv: DataviewApi = getAPI();
 				const db: Client = await this.getDatabaseClient();
 
 				const filepath: string =
-					this.app.workspace.getActiveFile().path;
+					this.app.workspace.getActiveFile()?.path;
+
+				if (!filepath) {
+					// eslint-disable-next-line no-new
+					new Notice("No active file found");
+					return;
+				}
+
 				const dataviewData: Record<string, unknown> = dv.page(filepath);
 
 				delete dataviewData.file;
