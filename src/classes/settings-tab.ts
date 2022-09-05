@@ -1,4 +1,5 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
+import { AdapterName } from "../types/adapter-name";
 import { PostgreSQLPlugin } from "./postgresql-plugin";
 
 export class SettingsTab extends PluginSettingTab {
@@ -17,6 +18,31 @@ export class SettingsTab extends PluginSettingTab {
 		containerEl.createEl("h2", { text: "PostgreSQL settings" });
 
 		new Setting(containerEl)
+			.setName("Adapter name")
+			.setDesc(
+				"Select your database adapter here. If yours doesn't appear, please open an issue on GitHub."
+			)
+			.addDropdown((dropdown) => {
+				// get AdapterName enum as dict
+				const options: Record<string, string> = Object.keys(
+					AdapterName
+				).reduce(
+					(acc, key) => ({
+						...acc,
+						[key]: key,
+					}),
+					{}
+				);
+
+				// add the values of AdapterName as dropdown options
+				dropdown.addOptions(options);
+				dropdown.onChange(async (value) => {
+					this.plugin.settings.adapterName = value as AdapterName;
+					await this.plugin.saveSettings();
+				});
+			});
+
+		new Setting(containerEl)
 			.setName("PostgreSQL connection URL")
 			.setDesc("This connection URL will be used to send your data.")
 			.addText((text) =>
@@ -24,7 +50,6 @@ export class SettingsTab extends PluginSettingTab {
 					.setPlaceholder("")
 					.setValue(this.plugin.settings.connectionUrl)
 					.onChange(async (url) => {
-						// TODO: try the connection URL
 						this.plugin.settings.connectionUrl = url;
 						await this.plugin.saveSettings();
 					})
