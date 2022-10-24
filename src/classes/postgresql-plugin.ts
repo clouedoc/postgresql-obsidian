@@ -53,13 +53,12 @@ export class PostgreSQLPlugin extends Plugin {
 
 				try {
 					await adapter.insertPage(filepath, dataviewData);
+					// eslint-disable-next-line no-new
+					new Notice(`${this.settings.adapterName}: Inserted page`);
 				} catch (err) {
 					// eslint-disable-next-line no-new
 					new Notice(`${this.settings.adapterName} error: ${err}`);
 				}
-
-				// eslint-disable-next-line no-new
-				new Notice(`${this.settings.adapterName}: Inserted page`);
 			},
 		});
 	}

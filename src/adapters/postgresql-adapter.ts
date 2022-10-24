@@ -34,8 +34,8 @@ export class PostgreSQLAdapter implements IDatabaseAdapter {
 		if (!this._sql) {
 			throw new Error("Not connected");
 		}
-		await this._sql`CREATE SCHEMA IF NOT EXISTS obsidian;
-			CREATE TABLE IF NOT EXISTS obsidian.file (
+		await this._sql`CREATE SCHEMA IF NOT EXISTS obsidian`;
+		await this._sql`CREATE TABLE IF NOT EXISTS obsidian.file (
 					path text PRIMARY KEY,
 					dataview_data json
 			);`;
@@ -51,8 +51,11 @@ export class PostgreSQLAdapter implements IDatabaseAdapter {
 			throw new Error("Not connected");
 		}
 
-		await this._sql`INSERT INTO obsidian.file (path, dataview_data)
-			VALUES (${path}, ${this._sql.json(data as JSONValue)}
+		await this._sql`INSERT INTO obsidian.file
+			${this._sql({
+				path,
+				dataview_data: this._sql.json(data as JSONValue),
+			})}
 			ON CONFLICT (path)
 			DO
 				UPDATE SET dataview_data = EXCLUDED.dataview_data
