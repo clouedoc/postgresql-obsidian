@@ -2,7 +2,7 @@ export interface IDatabaseAdapter {
 	/**
 	 * Create the initial schema of the database, if required
 	 */
-	createInitialSchema: (url: string) => Promise<void>;
+	migrate: (url: string) => Promise<void>;
 	/**
 	 * Insert a page into the database
 	 */

@@ -21,7 +21,9 @@ export class PostgreSQLPlugin extends Plugin {
 			name: "PostgreSQL: upload current file information",
 			callback: async () => {
 				// ensure that an adapter is connected
-				const adapter: IDatabaseAdapter = await this._ensureAdapter();
+				const adapter: IDatabaseAdapter = await constructAdapter(
+					this.settings.adapterName
+				);
 
 				const dv: DataviewApi | undefined = getAPI();
 				if (!dv) {
@@ -52,7 +54,12 @@ export class PostgreSQLPlugin extends Plugin {
 				delete dataviewData.position;
 
 				try {
-					await adapter.insertPage(filepath, dataviewData);
+					await adapter.migrate(this.settings.connectionUrl);
+					await adapter.insertPage(
+						this.settings.connectionUrl,
+						filepath,
+						dataviewData
+					);
 					// eslint-disable-next-line no-new
 					new Notice(`${this.settings.adapterName}: Inserted page`);
 				} catch (err) {
@@ -63,10 +70,6 @@ export class PostgreSQLPlugin extends Plugin {
 		});
 	}
 
-	public async onunload(): Promise<void> {
-		await this._disconnectAdapter();
-	}
-
 	public async loadSettings(): Promise<void> {
 		this.settings = Object.assign(
 			{},
@@ -75,39 +78,8 @@ export class PostgreSQLPlugin extends Plugin {
 		);
 	}
 
-	/**
-	 * Disconnect the underlying database adapter.
-	 * Note: won't do anything if the adapter is not connected.
-	 */
-	private async _disconnectAdapter(): Promise<void> {
-		if (this._adapter) {
-			await this._adapter.end();
-			this._adapter = undefined;
-		}
-	}
-
-	/**
-	 * Ensure that a database adapter is connected.
-	 */
-	private async _ensureAdapter(): Promise<IDatabaseAdapter> {
-		await this._disconnectAdapter();
-		this._adapter = await constructAdapter(
-			this.settings.adapterName,
-			this.settings.connectionUrl
-		);
-		return this._adapter;
-	}
-
 	public async saveSettings(): Promise<void> {
 		// FIXME: debounce this function
 		await this.saveData(this.settings);
-		try {
-			await this._ensureAdapter();
-		} catch (err) {
-			// eslint-disable-next-line no-new
-			new Notice(
-				`${this.settings.adapterName} instantiation error: ${err}`
-			);
-		}
 	}
 }

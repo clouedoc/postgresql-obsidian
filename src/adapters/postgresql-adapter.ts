@@ -2,72 +2,65 @@ import postgres, { JSONValue } from "postgres";
 import { IDatabaseAdapter } from "../interfaces/database-adapter";
 
 export class PostgreSQLAdapter implements IDatabaseAdapter {
-	private _url: string | undefined;
-	private _sql: postgres.Sql<{}> | undefined;
+	private async _connect(url: string): Promise<postgres.Sql<{}>> {
+		// note(clouedoc): there is a bug where postgres:// URLs are not working in Obsidian env, for some reason.
+		// (I think the issue is that the protocol is not recognized)
+		url = url.replace("postgres://", "http://");
+		url = url.replace("postgresql://", "http://");
 
-	public async ensureConnection(url: string): Promise<void> {
-		console.log("Connecting to PostgreSQL database at " + url);
-		if (this._url === url && this._sql) {
-			return;
-		}
+		console.log("Connecting to URL: " + url);
+		const connUrl: URL = new URL(url);
 
-		this._url = url;
-		if (this._sql) {
-			await this._sql.end();
-			this._sql = undefined;
-		}
-
-		this._sql = postgres(url, {
+		console.log(connUrl);
+		return postgres(url, {
 			prepare: false,
 			types: {
 				bigint: postgres.BigInt,
 			},
 		});
-		console.log("Connected to PostgreSQL database at " + url);
 	}
 
 	/**
 	 * Create the initial schema if not existing already.
 	 */
-	public async createInitialSchema(): Promise<void> {
+	public async migrate(url: string): Promise<void> {
 		console.log("Creating initial schema");
-		if (!this._sql) {
-			throw new Error("Not connected");
-		}
-		await this._sql`CREATE SCHEMA IF NOT EXISTS obsidian`;
-		await this._sql`CREATE TABLE IF NOT EXISTS obsidian.file (
+		// eslint-disable-next-line @typescript-eslint/typedef
+		const sql = await this._connect(url);
+		try {
+			await sql`CREATE SCHEMA IF NOT EXISTS obsidian`;
+			await sql`CREATE TABLE IF NOT EXISTS obsidian.file (
 					path text PRIMARY KEY,
 					dataview_data json
 			);`;
-		console.log("Created initial schema");
+			console.log("Created initial schema");
+		} finally {
+			await sql.end();
+		}
 	}
 
 	public async insertPage(
+		url: string,
 		path: string,
 		data: Record<string, unknown>
 	): Promise<void> {
-		console.log("Inserting page " + path);
-		if (!this._sql) {
-			throw new Error("Not connected");
-		}
+		// eslint-disable-next-line @typescript-eslint/typedef
+		const sql = await this._connect(url);
 
-		await this._sql`INSERT INTO obsidian.file
-			${this._sql({
+		try {
+			await sql`INSERT INTO obsidian.file
+			${sql({
 				path,
-				dataview_data: this._sql.json(data as JSONValue),
+				dataview_data: sql.json(data as JSONValue),
 			})}
 			ON CONFLICT (path)
 			DO
 				UPDATE SET dataview_data = EXCLUDED.dataview_data
 			;
 			`;
-		console.log("Inserted page " + path);
-	}
-
-	public async end(): Promise<void> {
-		if (this._sql) {
-			await this._sql.end();
-			this._sql = undefined;
+			console.log("Inserted page " + path);
+		} finally {
+			await sql.end();
 		}
 	}
 }

@@ -11,19 +11,8 @@ const adapters: Record<AdapterName, IDatabaseAdapter> = {
  * @returns
  */
 export async function constructAdapter(
-	name: AdapterName,
-	url: string
+	name: AdapterName
 ): Promise<IDatabaseAdapter> {
 	const adapter: IDatabaseAdapter = adapters[name];
-	try {
-		await adapter.ensureConnection(url);
-	} catch (err) {
-		throw new Error("Error while ensuring connection: " + err);
-	}
-	try {
-		await adapter.createInitialSchema();
-	} catch (err) {
-		throw new Error("Error while creating initial schema: " + err);
-	}
 	return adapter;
 }

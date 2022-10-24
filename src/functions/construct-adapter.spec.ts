@@ -3,9 +3,6 @@ import { constructAdapter } from "./construct-adapter";
 
 it.skip("can construct a PostgreSQL adapter", async () => {
 	await expect(
-		constructAdapter(
-			AdapterName.PostgreSQL,
-			"postgres://gitpod:1234@localhost:5432/postgres"
-		)
+		constructAdapter(AdapterName.PostgreSQL)
 	).resolves.not.toThrow();
 });
