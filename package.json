@@ -1,6 +1,6 @@
 {
 	"name": "postgresql-obsidian",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "An obsidian.md plugin that sends your data to a PostgreSQL database for further analysis.",
 	"main": "main.js",
 	"scripts": {

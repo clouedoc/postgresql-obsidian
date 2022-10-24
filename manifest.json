@@ -1,7 +1,7 @@
 {
 	"id": "postgresql-obsidian",
 	"name": "PostgreSQL Obsidian",
-	"version": "0.0.2",
+	"version": "1.0.0",
 	"minAppVersion": "0.12.0",
 	"description": "An Obsidian plugin to upload your notes' metadata to your database.",
 	"author": "clouedoc",
