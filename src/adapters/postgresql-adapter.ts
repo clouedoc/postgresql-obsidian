@@ -31,7 +31,7 @@ export class PostgreSQLAdapter implements IDatabaseAdapter {
 			await sql`CREATE SCHEMA IF NOT EXISTS obsidian`;
 			await sql`CREATE TABLE IF NOT EXISTS obsidian.file (
 					path text PRIMARY KEY,
-					dataview_data json
+					dataview_data jsonb
 			);`;
 			console.log("Created initial schema");
 		} finally {
