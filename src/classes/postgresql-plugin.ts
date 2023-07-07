@@ -1,4 +1,4 @@
-import { Notice, Plugin } from "obsidian";
+import { Editor, MarkdownView, Notice, Plugin, TFile } from "obsidian";
 import { DataviewApi, getAPI } from "obsidian-dataview";
 import { SettingsTab } from ".";
 import { DEFAULT_SETTINGS } from "../constants";
@@ -11,27 +11,67 @@ export class PostgreSQLPlugin extends Plugin {
 	public settings!: IPostgresPluginSettings;
 	protected _adapter: IDatabaseAdapter | undefined;
 
+	private async _writeToDB(filepath: string): Promise<void> {
+		// ensure that an adapter is connected
+		const adapter: IDatabaseAdapter = await constructAdapter(
+			this.settings.adapterName
+		);
+
+		const dv: DataviewApi | undefined = getAPI();
+		if (!dv) {
+			// eslint-disable-next-line no-new
+			new Notice("The Dataview API is not available");
+			return;
+		};
+		const dataviewData: Record<string, unknown> | undefined =
+		dv.page(filepath);
+
+		if (!dataviewData) {
+			// eslint-disable-next-line no-new
+			new Notice("Failed to fetch the dataview data");
+			return;
+		}
+
+		delete dataviewData.file;
+		delete dataviewData.position;
+		
+		try {
+			await adapter.migrate(this.settings.connectionUrl);
+			await adapter.insertPage(
+				this.settings.connectionUrl,
+				filepath,
+				dataviewData
+			);
+			// eslint-disable-next-line no-new
+			new Notice(`${this.settings.adapterName}: Inserted page`);
+		} catch (err) {
+			// eslint-disable-next-line no-new
+			new Notice(`${this.settings.adapterName} error: ${err}`);
+		}
+	}
+
 	public async onload(): Promise<void> {
 		await this.loadSettings();
 
 		this.addSettingTab(new SettingsTab(this.app, this));
 
 		this.addCommand({
+			id: "postgresql-upload-current-folder",
+			name: "PostgreSQL: upload current folder information",
+			editorCallback: (editor: Editor, view: MarkdownView) => {
+				view.file.parent.children.forEach(async (file) => {
+					if (file instanceof TFile) {
+						await this._writeToDB(file.path);
+					}
+				})
+			}
+		}
+		);
+
+		this.addCommand({
 			id: "postgresql-upload-current-file",
 			name: "PostgreSQL: upload current file information",
 			callback: async () => {
-				// ensure that an adapter is connected
-				const adapter: IDatabaseAdapter = await constructAdapter(
-					this.settings.adapterName
-				);
-
-				const dv: DataviewApi | undefined = getAPI();
-				if (!dv) {
-					// eslint-disable-next-line no-new
-					new Notice("The Dataview API is not available");
-					return;
-				}
-
 				const filepath: string | undefined =
 					this.app.workspace.getActiveFile()?.path;
 
@@ -40,32 +80,8 @@ export class PostgreSQLPlugin extends Plugin {
 					new Notice("No active file found");
 					return;
 				}
-
-				const dataviewData: Record<string, unknown> | undefined =
-					dv.page(filepath);
-
-				if (!dataviewData) {
-					// eslint-disable-next-line no-new
-					new Notice("Failed to fetch the dataview data");
-					return;
-				}
-
-				delete dataviewData.file;
-				delete dataviewData.position;
-
-				try {
-					await adapter.migrate(this.settings.connectionUrl);
-					await adapter.insertPage(
-						this.settings.connectionUrl,
-						filepath,
-						dataviewData
-					);
-					// eslint-disable-next-line no-new
-					new Notice(`${this.settings.adapterName}: Inserted page`);
-				} catch (err) {
-					// eslint-disable-next-line no-new
-					new Notice(`${this.settings.adapterName} error: ${err}`);
-				}
+				
+				await this._writeToDB(filepath);
 			},
 		});
 	}
